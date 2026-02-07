@@ -11,7 +11,7 @@ interface Stats {
   totalPurchases: number
 }
 
-export default function Home() {
+export default function DashboardPage() {
   const [stats, setStats] = useState<Stats>({
     totalStores: 0,
     totalProducts: 0,
@@ -22,8 +22,14 @@ export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/login')
+      return
+    }
+
     fetchStats()
-  }, [])
+  }, [router])
 
   const fetchStats = async () => {
     try {

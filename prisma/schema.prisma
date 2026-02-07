@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Store {
+  id        Int             @id @default(autoincrement())
+  name      String
+  location  String?
+  products  Product[]
+  closures  ShiftClosure[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model Product {
+  id         Int         @id @default(autoincrement())
+  storeId    Int
+  store      Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  code       String?
+  name       String
+  price      Float
+  cost       Float       @default(0)
+  qty        Int         @default(0)
+  waste      Waste[]
+  sales      Sale[]
+  purchases  Purchase[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Employee {
+  id         Int            @id @default(autoincrement())
+  name       String
+  paymentType String        // 'hora' or 'fijo'
+  payment    Float
+  daysWorked Int            @default(0)
+  closures   ShiftClosure[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model Waste {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
+  reason    String?
+  date      DateTime @default(now())
+}
+
+model Sale {
+  id          Int      @id @default(autoincrement())
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity    Int
+  total       Float
+  costUnit    Float    @default(0)
+  profitTotal Float    @default(0)
+  date        DateTime @default(now())
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
+  costUnit  Float
+  total     Float
+  date      DateTime @default(now())
+}
+
+model ShiftClosure {
+  id          Int      @id @default(autoincrement())
+  storeId     Int
+  store       Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  employeeId  Int
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  totalAmount Float
+  date        DateTime @default(now())
+}
