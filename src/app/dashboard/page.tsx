@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 interface Stats {
   totalStores: number
@@ -22,12 +23,6 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      router.push('/login')
-      return
-    }
-
     fetchStats()
   }, [router])
 
@@ -95,81 +90,158 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <motion.main
+        className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+      >
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
+        <motion.div
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.15
+              }
+            }
+          }}
+        >
+          <motion.div
+            className="bg-white/90 backdrop-blur-sm overflow-hidden shadow-xl rounded-xl border border-gray-200 hover:shadow-2xl transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="p-5 bg-gradient-to-br from-white to-gray-50">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">🏪</span>
-                  </div>
-                </div>
+                <motion.div
+                  className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <motion.span
+                    className="text-white text-lg"
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    🏪
+                  </motion.span>
+                </motion.div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Tiendas</dt>
-                    <dd className="text-lg font-medium text-gray-900">{stats.totalStores}</dd>
+                    <dt className="text-sm font-medium text-gray-600 truncate">Tiendas</dt>
+                    <dd className="text-2xl font-bold text-gray-900">{stats.totalStores}</dd>
                   </dl>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
+          <motion.div
+            className="bg-white/90 backdrop-blur-sm overflow-hidden shadow-xl rounded-xl border border-gray-200 hover:shadow-2xl transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="p-5 bg-gradient-to-br from-white to-gray-50">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">📦</span>
-                  </div>
-                </div>
+                <motion.div
+                  className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-600 to-green-800 rounded-lg flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <motion.span
+                    className="text-white text-lg"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 4 }}
+                  >
+                    📦
+                  </motion.span>
+                </motion.div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Productos</dt>
-                    <dd className="text-lg font-medium text-gray-900">{stats.totalProducts}</dd>
+                    <dt className="text-sm font-medium text-gray-600 truncate">Productos</dt>
+                    <dd className="text-2xl font-bold text-gray-900">{stats.totalProducts}</dd>
                   </dl>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
+          <motion.div
+            className="bg-white/90 backdrop-blur-sm overflow-hidden shadow-xl rounded-xl border border-gray-200 hover:shadow-2xl transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="p-5 bg-gradient-to-br from-white to-gray-50">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">💰</span>
-                  </div>
-                </div>
+                <motion.div
+                  className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-amber-600 to-orange-700 rounded-lg flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <motion.span
+                    className="text-white text-lg"
+                    animate={{
+                      rotate: [0, -10, 10, 0],
+                      scale: [1, 1.05, 1]
+                    }}
+                    transition={{ duration: 5, repeat: Infinity, repeatDelay: 2 }}
+                  >
+                    💰
+                  </motion.span>
+                </motion.div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Ventas</dt>
-                    <dd className="text-lg font-medium text-gray-900">{stats.totalSales}</dd>
+                    <dt className="text-sm font-medium text-gray-600 truncate">Ventas</dt>
+                    <dd className="text-2xl font-bold text-gray-900">{stats.totalSales}</dd>
                   </dl>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
+          <motion.div
+            className="bg-white/90 backdrop-blur-sm overflow-hidden shadow-xl rounded-xl border border-gray-200 hover:shadow-2xl transition-all duration-300"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="p-5 bg-gradient-to-br from-white to-gray-50">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">🛒</span>
-                  </div>
-                </div>
+                <motion.div
+                  className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-slate-600 to-slate-800 rounded-lg flex items-center justify-center shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <motion.span
+                    className="text-white text-lg"
+                    animate={{ y: [0, -2, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    🛒
+                  </motion.span>
+                </motion.div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Compras</dt>
-                    <dd className="text-lg font-medium text-gray-900">{stats.totalPurchases}</dd>
+                    <dt className="text-sm font-medium text-gray-600 truncate">Compras</dt>
+                    <dd className="text-2xl font-bold text-gray-900">{stats.totalPurchases}</dd>
                   </dl>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -221,7 +293,7 @@ export default function DashboardPage() {
             </div>
           </Link>
         </div>
-      </main>
+      </motion.main>
     </div>
   )
 }

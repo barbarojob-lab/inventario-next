@@ -9,10 +9,11 @@ const updateStoreSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const storeId = parseInt(params.id)
+    const { id } = await params
+    const storeId = parseInt(id)
     const store = await prisma.store.findUnique({
       where: { id: storeId },
       include: {
@@ -34,10 +35,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const storeId = parseInt(params.id)
+    const { id } = await params
+    const storeId = parseInt(id)
     const body = await request.json()
     const updateData = updateStoreSchema.parse(body)
 
@@ -55,10 +57,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const storeId = parseInt(params.id)
+    const { id } = await params
+    const storeId = parseInt(id)
 
     await prisma.store.delete({
       where: { id: storeId }
