@@ -9,12 +9,20 @@ const createPurchaseSchema = z.object({
   costUnit: z.number().positive(),
 })
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url)
+    const storeId = searchParams.get('storeId')
+
     const purchases = await prisma.purchase.findMany({
+      where: storeId ? {
+        product: {
+          storeId: parseInt(storeId)
+        }
+      } : undefined,
       include: {
         product: {
-          select: { name: true }
+          select: { name: true, store: { select: { name: true } } }
         }
       },
       orderBy: { date: 'desc' }

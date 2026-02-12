@@ -36,11 +36,19 @@ interface Purchase {
 
 
 
+interface Store {
+  id: number
+  name: string
+  location?: string
+}
+
 export default function OperationsPage() {
   const [activeTab, setActiveTab] = useState('sales')
   const [products, setProducts] = useState<Product[]>([])
   const [sales, setSales] = useState<Sale[]>([])
   const [purchases, setPurchases] = useState<Purchase[]>([])
+  const [stores, setStores] = useState<Store[]>([])
+  const [selectedStoreId, setSelectedStoreId] = useState('')
 
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -49,19 +57,23 @@ export default function OperationsPage() {
     fetchAllData()
   }, [])
 
+  useEffect(() => {
+    if (selectedStoreId) {
+      fetchOperationsData()
+    }
+  }, [selectedStoreId])
+
   const fetchAllData = async () => {
     try {
-      const [productsRes, salesRes, purchasesRes, wastesRes, employeesRes] = await Promise.all([
+      const [productsRes, storesRes, wastesRes, employeesRes] = await Promise.all([
         fetch('/api/products'),
-        fetch('/api/operations/sales'),
-        fetch('/api/operations/purchases'),
+        fetch('/api/stores'),
         fetch('/api/operations/waste'),
         fetch('/api/employees') // Assuming this API exists
       ])
 
       if (productsRes.ok) setProducts(await productsRes.json())
-      if (salesRes.ok) setSales(await salesRes.json())
-      if (purchasesRes.ok) setPurchases(await purchasesRes.json())
+      if (storesRes.ok) setStores(await storesRes.json())
       // wastes is not used in current implementation
       if (wastesRes.ok) await wastesRes.json()
       // employees is not used in current implementation
@@ -70,6 +82,22 @@ export default function OperationsPage() {
       console.error('Error fetching data:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchOperationsData = async () => {
+    if (!selectedStoreId) return
+
+    try {
+      const [salesRes, purchasesRes] = await Promise.all([
+        fetch(`/api/operations/sales?storeId=${selectedStoreId}`),
+        fetch(`/api/operations/purchases?storeId=${selectedStoreId}`)
+      ])
+
+      if (salesRes.ok) setSales(await salesRes.json())
+      if (purchasesRes.ok) setPurchases(await purchasesRes.json())
+    } catch (error) {
+      console.error('Error fetching operations data:', error)
     }
   }
 
@@ -103,6 +131,24 @@ export default function OperationsPage() {
               </button>
               <h1 className="text-2xl font-bold text-gray-900">Operaciones</h1>
             </div>
+            <div className="flex items-center">
+              <label htmlFor="store-select" className="mr-2 text-sm font-medium text-gray-700">
+                Tienda:
+              </label>
+              <select
+                id="store-select"
+                value={selectedStoreId}
+                onChange={(e) => setSelectedStoreId(e.target.value)}
+                className="border-gray-300 rounded-md text-sm"
+              >
+                <option value="">Seleccionar tienda</option>
+                {stores.map((store) => (
+                  <option key={store.id} value={store.id}>
+                    {store.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </header>
@@ -133,8 +179,8 @@ export default function OperationsPage() {
 
         {/* Tab Content */}
         <div className="bg-white shadow rounded-lg p-6">
-          {activeTab === 'sales' && <SalesTab sales={sales} products={products} onUpdate={fetchAllData} />}
-          {activeTab === 'purchases' && <PurchasesTab purchases={purchases} products={products} onUpdate={fetchAllData} />}
+          {activeTab === 'sales' && <SalesTab sales={sales} products={products} selectedStoreId={selectedStoreId} onUpdate={fetchOperationsData} />}
+          {activeTab === 'purchases' && <PurchasesTab purchases={purchases} products={products} selectedStoreId={selectedStoreId} onUpdate={fetchOperationsData} />}
           {activeTab === 'waste' && <WasteTab onUpdate={fetchAllData} />}
           {activeTab === 'salaries' && <SalariesTab onUpdate={fetchAllData} />}
         </div>
@@ -143,7 +189,7 @@ export default function OperationsPage() {
   )
 }
 
-function SalesTab({ sales, products, onUpdate }: { sales: Sale[], products: Product[], onUpdate: () => void }) {
+function SalesTab({ sales, products, selectedStoreId, onUpdate }: { sales: Sale[], products: Product[], selectedStoreId: string, onUpdate: () => void }) {
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ productId: '', quantity: '' })
   const [loading, setLoading] = useState(false)
@@ -226,7 +272,7 @@ function SalesTab({ sales, products, onUpdate }: { sales: Sale[], products: Prod
                   onChange={(e) => setFormData({ ...formData, productId: e.target.value, quantity: '' })}
                 >
                   <option value="">Seleccionar producto</option>
-                  {products.map((product) => (
+                  {products.filter(product => selectedStoreId ? product.storeId === parseInt(selectedStoreId) : true).map((product) => (
                     <option key={product.id} value={product.id}>
                       {product.name} - ${product.price} (Stock: {product.qty})
                     </option>
@@ -279,7 +325,7 @@ function SalesTab({ sales, products, onUpdate }: { sales: Sale[], products: Prod
   )
 }
 
-function PurchasesTab({ purchases, products, onUpdate }: { purchases: Purchase[], products: Product[], onUpdate: () => void }) {
+function PurchasesTab({ purchases, products, selectedStoreId, onUpdate }: { purchases: Purchase[], products: Product[], selectedStoreId: string, onUpdate: () => void }) {
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({ productId: '', quantity: '', costUnit: '' })
   const [loading, setLoading] = useState(false)
@@ -381,7 +427,7 @@ function PurchasesTab({ purchases, products, onUpdate }: { purchases: Purchase[]
                   onChange={(e) => setFormData({ ...formData, productId: e.target.value })}
                 >
                   <option value="">Seleccionar producto</option>
-                  {products.map((product) => (
+                  {products.filter(product => selectedStoreId ? product.storeId === parseInt(selectedStoreId) : true).map((product) => (
                     <option key={product.id} value={product.id}>
                       {product.name} - Tienda: {product.store.name}
                     </option>
