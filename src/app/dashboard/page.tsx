@@ -23,6 +23,15 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return
+    
+    // Check if user is authenticated
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/login')
+      return
+    }
     fetchStats()
   }, [router])
 

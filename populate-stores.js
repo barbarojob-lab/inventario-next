@@ -12,6 +12,20 @@ async function populateStores() {
   try {
     console.log('Agregando 10 tiendas con productos a la base de datos...');
 
+    // First, create a default user if none exists
+    let user = await prisma.user.findFirst();
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          username: 'admin',
+          password: 'admin123' // In production, this should be hashed!
+        }
+      });
+      console.log(`Usuario creado: ${user.username}`);
+    } else {
+      console.log(`Usando usuario existente: ${user.username}`);
+    }
+
     const storesData = [
       { name: 'Fashion Central', location: 'Centro de la Ciudad', category: 'Ropa' },
       { name: 'Gourmet Deli', location: 'Zona Norte', category: 'Comida' },
@@ -33,7 +47,9 @@ async function populateStores() {
         'Calcetines Algodón', 'Cinturón Cuero', 'Sombrero Panamá', 'Guantes Invierno', 'Bikini Playa',
         'Pijama Algodón', 'Ropa Interior', 'Medias Nylon', 'Bolso Mano', 'Mochila Escolar',
         'Corbata Seda', 'Tirantes Elegantes', 'Pulsera Moda', 'Collar Perlas', 'Anillo Plata',
-        'Pendientes Oro', 'Reloj Pulsera', 'Gafas Sol', 'Billetera Cuero', 'Cinturón Hebilla'
+        'Pendientes Oro', 'Reloj Pulsera', 'Gafas Sol', 'Billetera Cuero', 'Cinturón Hebilla',
+        'Chaleco Deportivo', 'Body Encaje', 'Leggings Algodón', 'Top Deportivo', 'Suéter Lana',
+        'Parka Invierno', 'Botas Cuero', 'Sandalias Verano', 'Mocasines Piel', 'Cazadora Vaquero'
       ],
       'Comida': [
         'Pan Integral', 'Leche Descremada', 'Queso Cheddar', 'Manzanas Rojas', 'Plátanos Maduros',
@@ -42,16 +58,20 @@ async function populateStores() {
         'Chocolate Amargo', 'Galletas Avena', 'Cereal Maíz', 'Miel Pura', 'Mermelada Fresa',
         'Atún en Lata', 'Sardinas Aceite', 'Tomate en Lata', 'Maíz Dulce', 'Chícharos Verdes',
         'Sopa Pollo', 'Fideos Instantáneos', 'Salsa Tomate', 'Mayonesa', 'Mostaza',
-        'Ketchup', 'Aderezo Italiano', 'Vinagre Manzana', 'Especias Mixtas', 'Hierbas Provensales'
+        'Ketchup', 'Aderezo Italiano', 'Vinagre Manzana', 'Especias Mixtas', 'Hierbas Provensales',
+        'Yogur Griego', 'Mantequilla', 'Huevos Blancos', 'Crema Leche', 'Queso Mozarella',
+        'Jamón Serrano', 'Tocino', 'Salchichas', 'Pollo Entero', 'Carne Molida'
       ],
       'Electrónica': [
         'Smartphone Android', 'iPhone Pro', 'Tablet 10"', 'Laptop Gaming', 'Monitor 27"',
         'Teclado Mecánico', 'Mouse Óptico', 'Auriculares Bluetooth', 'Parlantes Portátiles', 'Cámara Digital',
         'Smart TV 55"', 'Consola Videojuegos', 'Router WiFi', 'Disco Duro Externo', 'Memoria USB',
-        'Cargador Rápido', 'Batería Portátil', 'Webcam HD', 'Micrófono USB', 'Altavoces 5.1',
+        'Cargador Rápido', 'Batería Portátil', 'Webcam HD', 'Micrófono USB', 'Altificadores 5.1',
         'Proyector HD', 'Drone Profesional', 'Smartwatch', 'E-Reader', 'Impresora Multifunción',
         'Escáner Documentos', 'UPS Energía', 'Cable HDMI', 'Adaptador USB-C', 'Tarjeta Memoria',
-        'Control Remoto Universal', 'Reproductor Blu-ray', 'Grabadora DVR', 'Sistema Seguridad', 'Termostato Inteligente'
+        'Control Remoto Universal', 'Reproductor Blu-ray', 'Grabadora DVR', 'Sistema Seguridad', 'Termostato Inteligente',
+        'Smartphone Ekonomi', 'Tablet 8"', 'Monitor 24"', 'Mouse Inalámbrico', 'Auriculares Gaming',
+        'Soundbar', 'Cámara Acción', 'Kindle Paperwhite', 'Consola Portátil', 'Hub USB'
       ],
       'Hogar': [
         'Sofá 3 Plazas', 'Mesa Comedor', 'Sillas Acabado', 'Cama King Size', 'Cómoda 6 Cajones',
@@ -60,7 +80,9 @@ async function populateStores() {
         'Cubertería Plata', 'Mantel Individual', 'Servilletas Papel', 'Toallas Baño', 'Sábanas Algodón',
         'Almohadas Pluma', 'Colchón Viscoelástico', 'Mueble TV', 'Estantería Modular', 'Silla Escritorio',
         'Escritorio Madera', 'Librero Alto', 'Cesto Basura', 'Planta Decorativa', 'Marco Fotos',
-        'Cojín Decorativo', 'Manta Polar', 'Cortina Ducha', 'Jabón Líquido', 'Detergente Ropa'
+        'Cojín Decorativo', 'Manta Polar', 'Cortina Ducha', 'Jabón Líquido', 'Detergente Ropa',
+        'Sofá Cama', 'Mesa Noche', 'Estufa Gas', 'Horno Microondas', 'Refrigerador',
+        'Lavadora', 'Secadora', 'Aspiradora', 'Ventilador', 'Aire Acondicionado'
       ],
       'Deportes': [
         'Pelota Fútbol', 'Balón Baloncesto', 'Raqueta Tenis', 'Bicicleta Montaña', 'Pesas Mancuernas',
@@ -69,7 +91,9 @@ async function populateStores() {
         'Banda Sudor', 'Botella Agua', 'Protector Solar', 'Gafas Natación', 'Aletas Nadar',
         'Tabla Surf', 'Patineta', 'Guantes Portería', 'Red Voleibol', 'Conos Entrenamiento',
         'Cronómetro Digital', 'Medidor Pasos', 'Colchoneta Gimnasio', 'Banco Press', 'Máquina Remo',
-        'Bicicleta Estática', 'Eliptica', 'Caminadora', 'Saco Boxeo', 'Pesa Rusa'
+        'Bicicleta Estática', 'Eliptica', 'Caminadora', 'Saco Boxeo', 'Pesa Rusa',
+        'Balón Voleibol', 'Raqueta Padel', 'Pelota Tennis', 'Red Badminton', 'Guantes Gimnasio',
+        'Cinturón Levantamiento', 'Straps Fitness', 'Bandas Resistencia', 'Balón Medicinal', 'Coches Running'
       ],
       'Belleza': [
         'Crema Hidratante', 'Serum Vitamina C', 'Máscara Pestañas', 'Labial Rojo', 'Base Maquillaje',
@@ -78,7 +102,9 @@ async function populateStores() {
         'Mascarilla Cabello', 'Tinte Rubio', 'Removedor Esmalte', 'Esmalte Rosa', 'Crema Manos',
         'Loción Corporal', 'Desodorante Roll-on', 'Perfume Floral', 'Agua Micelar', 'Tónico Facial',
         'Exfoliante Corporal', 'Mascarilla Arcilla', 'Aceite Facial', 'Crema Ojos', 'Bálsamo Labios',
-        'Cepillo Cabello', 'Secador Pelo', 'Plancha Alisadora', 'Rizador Pelo', 'Cortauñas'
+        'Cepillo Cabello', 'Secador Pelo', 'Plancha Alisadora', 'Rizador Pelo', 'Cortauñas',
+        'Spray Brillo', 'Mousse Volumen', 'Cera Pelo', 'Gel Fijador', 'Tónico Fortalecedor',
+        'Sérum Reparador', 'Crema Antiedad', 'Protector Solar Facial', 'Mascarilla Noturna', 'Essence'
       ],
       'Libros': [
         'Novela Romántica', 'Thriller Suspense', 'Ciencia Ficción', 'Biografía Política', 'Libro Cocina',
@@ -87,7 +113,9 @@ async function populateStores() {
         'Diccionario Español', 'Atlas Mundial', 'Libro Matemáticas', 'Química Orgánica', 'Física Moderna',
         'Historia Literatura', 'Psicología Cognitiva', 'Economía Básica', 'Derecho Constitucional', 'Medicina General',
         'Arquitectura Moderna', 'Fotografía Digital', 'Música Clásica', 'Teatro Contemporáneo', 'Pintura Renacentista',
-        'Escultura Antigua', 'Diseño Gráfico', 'Marketing Digital', 'Emprendimiento', 'Finanzas Personales'
+        'Escultura Antigua', 'Diseño Gráfico', 'Marketing Digital', 'Emprendimiento', 'Finanzas Personales',
+        'Astronomía Básica', 'Geología', 'Biología Molecular', 'Filosofía Política', 'Sociología',
+        'Antropología', 'Linguística', 'Mitología', 'Religiones Mundo', 'Arte Moderno'
       ],
       'Mascotas': [
         'Croquetas Perro', 'Comida Gato', 'Arena Sanitaria', 'Collar Antipulgas', 'Champú Mascotas',
@@ -96,7 +124,9 @@ async function populateStores() {
         'Jaula Hamster', 'Pecera Completa', 'Alimento Peces', 'Nido Pájaros', 'Semillas Aves',
         'Heno Conejo', 'Jaula Conejo', 'Comida Tortuga', 'Terrario Reptil', 'Alimento Roedores',
         'Collar Perro', 'Correa Paseo', 'Arnés Gato', 'Identificación', 'Juguete Interactivo',
-        'Rascador Gato', 'Limpieza Jaula', 'Filtro Acuario', 'Decoración Terrario', 'Alimento Especial'
+        'Rascador Gato', 'Limpieza Jaula', 'Filtro Acuario', 'Decoración Terrario', 'Alimento Especial',
+        'Bocadillos Perro', 'Leche Gato', 'Cama Calefactada', 'Juguete Cuerda', 'Dispensador Comida',
+        'Bebedero Automático', 'Cepillo Dientes', 'Spray Aromatizante', 'Cama Impermeable', 'Comedero Automático'
       ],
       'Automotriz': [
         'Aceite Motor', 'Filtro Aire', 'Bujías Encendido', 'Pastillas Freno', 'Batería Auto',
@@ -105,7 +135,9 @@ async function populateStores() {
         'Bomba Gasolina', 'Inyectores', 'Sensor Oxígeno', 'Catalizador', 'Escape Completo',
         'Suspensión Delantera', 'Dirección Hidráulica', 'Frenos ABS', 'Airbag', 'Cinturones Seguridad',
         'Espejos Retrovisores', 'Faros LED', 'Luces Neón', 'Alarma Auto', 'GPS Navegador',
-        'Cámara Reverso', 'Sensores Estacionamiento', 'Techo Solar', 'Asientos Cuero', 'Volante Deportivo'
+        'Cámara Reverso', 'Sensores Estacionamiento', 'Techo Solar', 'Asientos Cuero', 'Volante Deportivo',
+        'Neumáticos Invierno', 'Cadenas Nieve', 'Filtro Combustible', 'Filtro Polen', 'Depósito Líquido',
+        'Parabrisas', 'Cristal Lateral', 'Luneta Trasera', 'Emblemas', 'Tapetes Goma'
       ],
       'Niños': [
         'Muñeca Barbie', 'Carro Control Remoto', 'Lego Creativo', 'Pelota Saltarina', 'Puzzle 500 Piezas',
@@ -114,13 +146,16 @@ async function populateStores() {
         'Cochecito Plegable', 'Silla Alta', 'Andador Bebé', 'Móvil Cuna', 'Sábanas Cuna',
         'Juguete Educativo', 'Bloques Construcción', 'Rompecabezas', 'Juego Cocina', 'Casa Muñecas',
         'Tren Eléctrico', 'Avión Juguete', 'Barco Pirata', 'Dinosaurio Gigante', 'Princesa Corona',
-        'Superhéroe Capa', 'Vaquero Sombrero', 'Payaso Nariz Roja', 'Mago Varita', 'Hada Alas'
+        'Superhéroe Capa', 'Vaquero Sombrero', 'Payaso Nariz Roja', 'Mago Varita', 'Hada Alas',
+        'Balón Fútbol', 'Raqueta Infantil', 'Patines', 'Bicicleta Niño', 'Casco Protección',
+        'Muñeca Recambio', 'Set Doctor', 'Set Cocina', 'Tienda Camping', 'Pistola Juguete'
       ]
     };
 
     for (const storeData of storesData) {
       const store = await prisma.store.create({
         data: {
+          userId: user.id,
           name: storeData.name,
           location: storeData.location
         }

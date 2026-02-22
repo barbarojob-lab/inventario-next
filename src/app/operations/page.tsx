@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
@@ -10,6 +10,7 @@ interface Product {
   name: string
   price: number
   qty: number
+  storeId: number
   store: { name: string }
 }
 
@@ -53,17 +54,21 @@ export default function OperationsPage() {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  useEffect(() => {
-    fetchAllData()
-  }, [])
+  const fetchProductsForStore = useCallback(async () => {
+    if (!selectedStoreId) return
 
-  useEffect(() => {
-    if (selectedStoreId) {
-      fetchOperationsData()
+    try {
+      const response = await fetch(`/api/products?storeId=${selectedStoreId}`)
+      if (response.ok) {
+        const storeProducts = await response.json()
+        setProducts(storeProducts)
+      }
+    } catch (error) {
+      console.error('Error fetching products for store:', error)
     }
   }, [selectedStoreId])
 
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
     try {
       const [productsRes, storesRes, wastesRes, employeesRes] = await Promise.all([
         fetch('/api/products'),
@@ -83,9 +88,9 @@ export default function OperationsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const fetchOperationsData = async () => {
+  const fetchOperationsData = useCallback(async () => {
     if (!selectedStoreId) return
 
     try {
@@ -99,7 +104,26 @@ export default function OperationsPage() {
     } catch (error) {
       console.error('Error fetching operations data:', error)
     }
-  }
+  }, [selectedStoreId])
+
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return
+    
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/login')
+      return
+    }
+    fetchAllData()
+  }, [router, fetchAllData])
+
+  useEffect(() => {
+    if (selectedStoreId) {
+      fetchOperationsData()
+      fetchProductsForStore()
+    }
+  }, [selectedStoreId, fetchOperationsData, fetchProductsForStore])
 
   const tabs = [
     { id: 'sales', label: 'Ventas', icon: '💰' },
@@ -489,7 +513,6 @@ function PurchasesTab({ purchases, products, selectedStoreId, onUpdate }: { purc
 }
 
 function WasteTab({ onUpdate }: { onUpdate: () => void }) {
-  // onUpdate is not used in placeholder implementation
   return (
     <div>
       <h2 className="text-lg font-medium text-gray-900 mb-4">Merma</h2>
@@ -499,7 +522,6 @@ function WasteTab({ onUpdate }: { onUpdate: () => void }) {
 }
 
 function SalariesTab({ onUpdate }: { onUpdate: () => void }) {
-  // onUpdate is not used in placeholder implementation
   return (
     <div>
       <h2 className="text-lg font-medium text-gray-900 mb-4">Salarios</h2>

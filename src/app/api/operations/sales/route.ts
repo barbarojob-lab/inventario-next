@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { Prisma } from '@prisma/client'
+import { verifyToken } from '@/lib/auth'
 
 const createSaleSchema = z.object({
   productId: z.number().int().positive(),
@@ -10,15 +11,21 @@ const createSaleSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    const authUser = verifyToken(request)
+    if (!authUser) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
     const storeId = searchParams.get('storeId')
 
     const sales = await prisma.sale.findMany({
-      where: storeId ? {
+      where: {
         product: {
-          storeId: parseInt(storeId)
+          store: { companyId: authUser.companyId },
+          ...(storeId ? { storeId: parseInt(storeId) } : {})
         }
-      } : undefined,
+      },
       include: {
         product: {
           select: { name: true, price: true, cost: true, store: { select: { name: true } } }
@@ -35,12 +42,20 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const authUser = verifyToken(request)
+    if (!authUser) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { productId, quantity } = createSaleSchema.parse(body)
 
-    // Check if product has enough stock
-    const product = await prisma.product.findUnique({
-      where: { id: productId }
+    // Check if product exists and belongs to company
+    const product = await prisma.product.findFirst({
+      where: {
+        id: productId,
+        store: { companyId: authUser.companyId }
+      }
     })
 
     if (!product) {

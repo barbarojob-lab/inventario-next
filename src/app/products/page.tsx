@@ -41,8 +41,16 @@ export default function ProductsPage() {
   const router = useRouter()
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return
+    
+    const token = localStorage.getItem('token')
+    if (!token) {
+      router.push('/login')
+      return
+    }
     fetchStores()
-  }, [])
+  }, [router])
 
   const fetchStores = async () => {
     try {

@@ -1,26 +1,42 @@
-# Archivo de ejemplo para configurar el .env antes de subir a Hostinger
+# ==========================================
+# CONFIGURACIÓN DEL PROYECTO - INVENTARIO NEXT
+# ==========================================
 
 # Base de datos (Hostinger proporciona MySQL)
 DATABASE_URL="mysql://tu_usuario:tu_contraseña@tu_servidor_mysql:3306/nombre_de_tu_base_de_datos"
 
+# ==========================================
+# SEGURIDAD - AUTENTICACIÓN
+# ==========================================
+
 # JWT Secret para autenticación (genera uno seguro)
+# Genera una clave aquí: https://generate-secret.vercel.app/ (256 bits)
+# O usa: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 JWT_SECRET="tu-clave-secreta-jwt-muy-larga-y-segura-aqui"
 
 # URL de la aplicación (tu dominio en Hostinger)
 NEXT_PUBLIC_APP_URL="https://tu-dominio.com"
 
-# Opcional: Si usas envío de emails (no implementado aún)
-# MAIL_HOST=
-# MAIL_PORT=
-# MAIL_USERNAME=
-# MAIL_PASSWORD=
-# MAIL_ENCRYPTION=
-# MAIL_FROM_ADDRESS=
+# ==========================================
+# EMAIL - RESEND (Envío de correos)
+# ==========================================
 
-# Instrucciones:
+# Obtén tu API key en https://resend.com
+# Es gratis: 3,000 emails/mes
+RESEND_API_KEY="re_123456789"
+
+# Email del remitente (debe ser un dominio verificado en Resend para producción)
+# En desarrollo puedes usar cualquier email
+FROM_EMAIL="Inventario Next <noreply@tu-dominio.com>"
+
+# ==========================================
+# INSTRUCCIONES DE CONFIGURACIÓN
+# ==========================================
+
 # 1. Copia este contenido a un archivo llamado .env en la raíz del proyecto
-# 2. Reemplaza los valores con los datos reales de tu cuenta en Hostinger
-# 3. El servidor MySQL de Hostinger te dará los valores para DATABASE_URL
-# 4. Genera un JWT_SECRET seguro (puedes usar un generador online)
-# 5. Asegúrate de que el schema.prisma esté configurado para MySQL (ya lo está)
-# 6. Ejecuta 'npx prisma generate' y 'npx prisma db push' después de configurar la DB
+# 2. Reemplaza los valores con los datos reales
+# 3. Para desarrollo local, puedes usar SQLite:
+#    DATABASE_URL="file:./dev.db"
+# 4. Para PostgreSQL local:
+#    DATABASE_URL="postgresql://postgres:password@localhost:5432/inventario"
+# 5. Ejecuta 'npx prisma generate' y 'npx prisma db push' después de configurar

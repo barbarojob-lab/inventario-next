@@ -6,24 +6,37 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// Modelo de Empresa (reemplaza User para sistema multi-tenant)
+model Company {
+  id              String     @id @default(uuid())
+  name            String
+  code            String     @unique // Código único de acceso: INV-ABC123
+  email           String     @unique
+  password        String
+  isActive        Boolean    @default(false)
+  activationToken String?
+  activationExp   DateTime?  // Token expira en 48 horas
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  
+  stores          Store[]
+  employees       Employee[]
 }
 
+// Modelo de Tienda (pertenece a una empresa)
 model Store {
   id        Int            @id @default(autoincrement())
+  companyId String
   name      String
   location  String?
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
+  company   Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
   products  Product[]
   closures  ShiftClosure[]
 }
 
+// Modelo de Producto (pertenece a una tienda)
 model Product {
   id        Int        @id @default(autoincrement())
   storeId   Int
@@ -40,17 +53,21 @@ model Product {
   waste     Waste[]
 }
 
+// Modelo de Empleado (pertenece a una empresa)
 model Employee {
   id          Int            @id @default(autoincrement())
+  companyId   String
   name        String
   paymentType String
   payment     Float
   daysWorked  Int            @default(0)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
   closures    ShiftClosure[]
 }
 
+// Modelo de Desperdicio
 model Waste {
   id        Int      @id @default(autoincrement())
   productId Int
@@ -60,6 +77,7 @@ model Waste {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
+// Modelo de Venta
 model Sale {
   id          Int      @id @default(autoincrement())
   productId   Int
@@ -71,6 +89,7 @@ model Sale {
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
+// Modelo de Compra
 model Purchase {
   id        Int      @id @default(autoincrement())
   productId Int
@@ -81,6 +100,7 @@ model Purchase {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
+// Modelo de Cierre de Turno
 model ShiftClosure {
   id          Int      @id @default(autoincrement())
   storeId     Int
