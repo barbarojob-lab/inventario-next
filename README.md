@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# inventario-next
 
-## Getting Started
+Aplicación de inventario construida con Next.js y TypeScript
 
-First, run the development server:
+Descripción
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Inventario Next es una aplicación web para gestionar productos y existencias. Permite crear, leer, actualizar y eliminar productos, realizar búsquedas y filtrar por categorías, y gestionar entradas y salidas de stock. Está diseñada para desplegarse en Vercel u otros proveedores compatibles con Next.js.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Características
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- CRUD completo de productos
+- Búsqueda y filtrado avanzados
+- Interfaz responsive (móvil y escritorio)
+- Páginas protegidas (autenticación) — opcional
+- API interna para operaciones de inventario
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Tecnologías
 
-## Learn More
+- Next.js (App Router)
+- TypeScript
+- React
+- (Opcional) Prisma / MongoDB / PostgreSQL
+- (Opcional) Tailwind CSS / CSS Modules
 
-To learn more about Next.js, take a look at the following resources:
+Requisitos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Node.js 16 o superior
+- npm, yarn o pnpm
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Variables de entorno recomendadas (.env)
 
-## Deploy on Vercel
+- DATABASE_URL=
+- NEXT_PUBLIC_API_URL=
+- NEXTAUTH_URL=
+- NEXTAUTH_SECRET=
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Instalación y ejecución
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clona el repositorio
+
+   git clone https://github.com/barbarojob-lab/inventario-next.git
+   cd inventario-next
+
+2. Instala dependencias
+
+   npm install
+   # o
+   yarn
+   # o
+   pnpm install
+
+3. Añade un archivo `.env` con las variables necesarias.
+
+4. Ejecuta en modo desarrollo
+
+   npm run dev
+
+5. Genera build para producción
+
+   npm run build
+   npm start
+
+Estructura recomendada
+
+- /app o /pages — Rutas de la aplicación
+- /components — Componentes React reutilizables
+- /lib — Clientes API y utilidades
+- /styles — Archivos CSS o configuraciones de Tailwind
+- /prisma o /db — Migraciones y esquema (si aplica)
+
+Despliegue
+
+- Recomendado: Vercel. Configura las variables de entorno en el panel de Vercel.
+- Alternativa: Netlify (con adaptaciones), Docker en un VPS, o servicios compatibles con Node.js.
+
+Contribuir
+
+1. Haz fork del proyecto y crea una rama para tu feature
+
+   git checkout -b feat/nombre-feature
+
+2. Abre un Pull Request describiendo los cambios y el motivo.
+
+Licencia
+
+Especifica la licencia que prefieres (p.ej. MIT). Puedo añadir un archivo LICENSE si lo deseas.
+
+Contacto
+
+https://github.com/barbarojob-lab
