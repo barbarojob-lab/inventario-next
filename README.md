@@ -1,26 +1,27 @@
 # inventario-next
 
-Aplicación de inventario construida con Next.js y TypeScript
+Aplicación de inventario construida con Next.js y TypeScript.
 
 Descripción
 
-Inventario Next es una aplicación web para gestionar productos y existencias. Permite crear, leer, actualizar y eliminar productos, realizar búsquedas y filtrar por categorías, y gestionar entradas y salidas de stock. Está diseñada para desplegarse en Vercel u otros proveedores compatibles con Next.js.
+Inventario Next es una aplicación web para gestionar productos y existencias. Permite crear, leer, actualizar y eliminar productos, realizar búsquedas y filtrar por categorías, y gestionar entradas y salidas de stock.
 
 Características
 
 - CRUD completo de productos
-- Búsqueda y filtrado avanzados
+- Búsqueda y filtrado
 - Interfaz responsive (móvil y escritorio)
-- Páginas protegidas (autenticación) — opcional
+- Páginas con SSR/SSG según se requiera
+- Rutas protegidas (opcional, con NextAuth u otro mecanismo)
 - API interna para operaciones de inventario
 
 Tecnologías
 
-- Next.js (App Router)
+- Next.js (App Router o Pages según implementación)
 - TypeScript
 - React
+- Tailwind CSS o CSS Modules
 - (Opcional) Prisma / MongoDB / PostgreSQL
-- (Opcional) Tailwind CSS / CSS Modules
 
 Requisitos
 
@@ -49,18 +50,18 @@ Instalación y ejecución
    # o
    pnpm install
 
-3. Añade un archivo `.env` con las variables necesarias.
+3. Crea un archivo `.env` con las variables necesarias (ver sección Variables de entorno).
 
 4. Ejecuta en modo desarrollo
 
    npm run dev
 
-5. Genera build para producción
+5. Generar build para producción
 
    npm run build
    npm start
 
-Estructura recomendada
+Estructura del proyecto (sugerida)
 
 - /app o /pages — Rutas de la aplicación
 - /components — Componentes React reutilizables
@@ -70,21 +71,25 @@ Estructura recomendada
 
 Despliegue
 
-- Recomendado: Vercel. Configura las variables de entorno en el panel de Vercel.
-- Alternativa: Netlify (con adaptaciones), Docker en un VPS, o servicios compatibles con Node.js.
+- Recomendado: Vercel (conexión directa a GitHub). Asegúrate de configurar las variables de entorno en el panel de Vercel.
+- Alternativas: Netlify (con adaptaciones), Docker en un VPS, o servicios compatibles con Node.js.
 
 Contribuir
 
-1. Haz fork del proyecto y crea una rama para tu feature
+1. Haz fork del proyecto y crea una rama para tu feature:
 
    git checkout -b feat/nombre-feature
 
-2. Abre un Pull Request describiendo los cambios y el motivo.
+2. Realiza commits claros y abre un Pull Request describiendo los cambios.
 
 Licencia
 
-Especifica la licencia que prefieres (p.ej. MIT). Puedo añadir un archivo LICENSE si lo deseas.
+Incluye una licencia (p. ej. MIT) si deseas permitir contribuciones públicas. Puedo añadir un archivo LICENSE si me lo indicas.
 
 Contacto
 
-https://github.com/barbarojob-lab
+Autor: barbarojob-lab — https://github.com/barbarojob-lab
+
+---
+
+Si quieres que personalice el README con ejemplos de comandos exactos de tu proyecto (scripts de package.json, provider DB, capturas de pantalla o badges de CI), dime qué detalles incluir y los añado.
